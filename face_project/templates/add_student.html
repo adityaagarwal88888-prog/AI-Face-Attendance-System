@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="min-h-screen flex justify-center items-center">
+
+    <div class="card w-full max-w-2xl p-10 rounded-3xl border">
+
+        <!-- HEADER -->
+
+        <div class="text-center mb-10">
+
+            <h1 class="text-5xl font-black mb-3">
+                Add Student
+            </h1>
+
+            <p class="card-text text-lg">
+                Register students into the AI attendance system
+            </p>
+
+        </div>
+
+        <!-- FORM -->
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="space-y-6"
+        >
+
+            <!-- NAME -->
+
+            <input
+                type="text"
+                name="name"
+                placeholder="Student Name"
+                required
+                class="card w-full border rounded-2xl px-5 py-4 outline-none"
+            >
+
+            <!-- ROLL -->
+
+            <input
+                type="text"
+                name="roll_no"
+                placeholder="Roll Number"
+                required
+                class="card w-full border rounded-2xl px-5 py-4 outline-none"
+            >
+
+            <!-- CLASS -->
+
+            <select
+                name="class_id"
+                required
+                class="card w-full border rounded-2xl px-5 py-4 outline-none"
+            >
+
+                {% for c in classes %}
+
+                <option value="{{ c.id }}">
+                    {{ c.class_name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <!-- SUBJECT -->
+
+            <select
+                name="subject_id"
+                required
+                class="card w-full border rounded-2xl px-5 py-4 outline-none"
+            >
+
+                {% for s in subjects %}
+
+                <option value="{{ s.id }}">
+                    {{ s.subject_name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+            <!-- MULTIPLE IMAGES -->
+
+<div>
+
+    <label class="block text-xl mb-4 font-semibold">
+        Upload Student Photos
+    </label>
+
+    <input
+        type="file"
+        name="images"
+        multiple
+        required
+        class="card w-full border rounded-2xl px-5 py-4 outline-none"
+    >
+
+    <p class="card-text mt-3 text-sm">
+        Upload 2–3 clear student photos for better AI recognition
+    </p>
+
+</div>
+
+
+            <!-- BUTTON -->
+
+            <button
+                class="w-full bg-white text-black py-5 rounded-2xl font-bold text-lg hover:scale-105 transition duration-300"
+            >
+                Add Student
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

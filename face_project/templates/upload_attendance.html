@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto">
+
+    <!-- HEADER -->
+
+    <div class="mb-10">
+
+        <h1 class="text-6xl font-black mb-3">
+            Mark Attendance
+        </h1>
+
+        <p class="card-text text-xl">
+            Upload classroom images for AI attendance detection
+        </p>
+
+    </div>
+
+    <!-- ALERT -->
+
+    {% if error %}
+
+    <div class="bg-red-500/20 border border-red-500 text-red-400 px-6 py-5 rounded-2xl mb-8 text-lg font-semibold">
+
+        {{ error }}
+
+    </div>
+
+    {% endif %}
+
+    <!-- FORM CARD -->
+
+    <div class="card border rounded-3xl p-10">
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="space-y-8"
+            onsubmit="showLoader()"
+        >
+
+            <!-- CLASS -->
+
+            <div>
+
+                <label class="block text-xl mb-4 font-semibold">
+                    Select Class
+                </label>
+
+                <select
+                    name="class_id"
+                    required
+                    class="card w-full border rounded-2xl px-5 py-4 outline-none"
+                >
+
+                    {% for c in classes %}
+
+                    <option value="{{ c.id }}">
+                        {{ c.class_name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- SUBJECT -->
+
+            <div>
+
+                <label class="block text-xl mb-4 font-semibold">
+                    Select Subject
+                </label>
+
+                <select
+                    name="subject_name"
+                    required
+                    class="card w-full border rounded-2xl px-5 py-4 outline-none"
+                >
+
+                    {% for s in subjects %}
+
+                    <option value="{{ s.subject_name }}">
+                        {{ s.subject_name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- DATE -->
+
+            <div>
+
+                <label class="block text-xl mb-4 font-semibold">
+                    Select Attendance Date
+                </label>
+
+                <input
+                    type="date"
+                    name="attendance_date"
+                    required
+                    value="{{ current_date }}"
+                    class="card w-full border rounded-2xl px-5 py-4 outline-none"
+                >
+
+                <p class="card-text mt-3 text-sm">
+                    Attendance cannot be marked twice for the same subject and date
+                </p>
+
+            </div>
+
+            <!-- FILE INPUT -->
+
+            <div>
+
+                <label class="block text-xl mb-4 font-semibold">
+                    Upload Classroom Images
+                </label>
+
+                <input
+                    type="file"
+                    name="group_images"
+                    multiple
+                    required
+                    accept=".jpg,.jpeg,.png"
+                    class="card w-full border rounded-2xl px-5 py-4 outline-none"
+                >
+
+                <p class="card-text mt-3 text-sm">
+                    Upload 2-3 classroom photos for better recognition accuracy
+                </p>
+
+            </div>
+
+            <!-- AI INFO -->
+
+            <div class="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6">
+
+                <h2 class="text-2xl font-bold mb-3 text-blue-400">
+                    AI Processing Information
+                </h2>
+
+                <ul class="space-y-2 card-text">
+
+                    <li>
+                        • Multiple classroom images improve detection accuracy
+                    </li>
+
+                    <li>
+                        • AI automatically compares detected faces with registered students
+                    </li>
+
+                    <li>
+                        • Manual correction can be done after AI processing
+                    </li>
+
+                    <li>
+                        • Duplicate attendance for same date is automatically blocked
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <!-- BUTTON -->
+
+            <button
+                id="submitButton"
+                class="w-full bg-white text-black py-5 rounded-2xl font-bold text-xl hover:scale-105 transition duration-300"
+            >
+                Process Attendance
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- AI PROCESSING LOADER -->
+
+<div
+    id="loader"
+    class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+>
+
+    <div class="card bg-zinc-900 border border-zinc-800 p-12 rounded-3xl text-center w-[500px]">
+
+        <!-- SPINNER -->
+
+        <div class="flex justify-center mb-8">
+
+            <div class="w-20 h-20 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+
+        </div>
+
+        <!-- TITLE -->
+
+        <h1 class="text-4xl font-black mb-4">
+            AI Processing Attendance
+        </h1>
+
+        <!-- DYNAMIC TEXT -->
+
+        <p
+            id="loadingText"
+            class="card-text text-xl"
+        >
+            Detecting Faces...
+        </p>
+
+    </div>
+
+</div>
+
+<!-- LOADER SCRIPT -->
+
+<script>
+
+function showLoader() {
+
+    // SHOW LOADER
+
+    document.getElementById(
+        "loader"
+    ).classList.remove("hidden")
+
+    // DISABLE BUTTON
+
+    document.getElementById(
+        "submitButton"
+    ).disabled = true
+
+    // LOADING TEXT
+
+    const loadingText = document.getElementById(
+        "loadingText"
+    )
+
+    const steps = [
+
+        "Detecting Faces...",
+
+        "Scanning Classroom Images...",
+
+        "Comparing Student Encodings...",
+
+        "Matching Registered Students...",
+
+        "Generating Attendance Records...",
+
+        "Preparing Attendance Report...",
+
+        "Finalizing AI Results..."
+    ]
+
+    let index = 0
+
+    setInterval(() => {
+
+        loadingText.innerText =
+            steps[index]
+
+        index++
+
+        if(index >= steps.length) {
+
+            index = 0
+        }
+
+    }, 1800)
+}
+
+</script>
+
+{% endblock %}

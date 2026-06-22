@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- SUCCESS BANNER -->
+
+<div class="card border border-green-500/30 rounded-3xl p-8 mb-10 bg-green-500/10">
+
+    <div class="flex justify-between items-center">
+
+        <div>
+
+            <h1 class="text-5xl font-black mb-3 text-green-400">
+                ✅ Attendance Processed Successfully
+            </h1>
+
+            <p class="card-text text-xl">
+                AI has analyzed classroom images and generated attendance records
+            </p>
+
+        </div>
+
+        <div class="text-7xl">
+            🤖
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ATTENDANCE INFO -->
+
+<div class="grid grid-cols-2 gap-8 mb-12">
+
+    <!-- SUBJECT -->
+
+    <div class="card border rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            Subject
+        </p>
+
+        <h1 class="text-4xl font-black text-blue-400">
+            {{ subject_name }}
+        </h1>
+
+    </div>
+
+    <!-- DATE -->
+
+    <div class="card border rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            Attendance Date
+        </p>
+
+        <h1 class="text-4xl font-black text-purple-400">
+            {{ attendance_date }}
+        </h1>
+
+    </div>
+
+</div>
+
+<!-- ANALYTICS -->
+
+<div class="grid grid-cols-3 gap-8 mb-14">
+
+    <!-- DETECTED -->
+
+    <div class="card border rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            AI Detected
+        </p>
+
+        <h1 class="text-7xl font-black text-green-400">
+            {{ students|length }}
+        </h1>
+
+        <p class="card-text mt-4">
+            Automatically recognized students
+        </p>
+
+    </div>
+
+    <!-- MISSED -->
+
+    <div class="card border rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            Missed Students
+        </p>
+
+        <h1 class="text-7xl font-black text-red-400">
+            {{ absent_students|length }}
+        </h1>
+
+        <p class="card-text mt-4">
+            Require manual verification
+        </p>
+
+    </div>
+
+    <!-- TOTAL -->
+
+    <div class="card border rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            Total Processed
+        </p>
+
+        <h1 class="text-7xl font-black text-blue-400">
+            {{ students|length + absent_students|length }}
+        </h1>
+
+        <p class="card-text mt-4">
+            Students analyzed by AI
+        </p>
+
+    </div>
+
+</div>
+
+<!-- AI DETECTED STUDENTS -->
+
+<div class="mb-16">
+
+    <div class="flex justify-between items-center mb-8">
+
+        <div>
+
+            <h2 class="text-5xl font-black mb-2">
+                ✅ AI Detected Students
+            </h2>
+
+            <p class="card-text text-lg">
+                Successfully recognized students
+            </p>
+
+        </div>
+
+        <div class="bg-green-500/20 text-green-400 px-6 py-3 rounded-2xl font-bold text-xl">
+
+            {{ students|length }} Present
+
+        </div>
+
+    </div>
+
+    <!-- STUDENTS GRID -->
+
+    <div class="grid grid-cols-3 gap-6">
+
+        {% for student in students %}
+
+        <div class="card border border-green-500/20 rounded-3xl p-6 hover:scale-[1.02] transition duration-300">
+
+            <div class="flex justify-between items-center mb-5">
+
+                <div class="w-14 h-14 rounded-full bg-green-500/20 flex items-center justify-center text-2xl">
+
+                    ✅
+
+                </div>
+
+                <span class="text-green-400 font-bold">
+                    Present
+                </span>
+
+            </div>
+
+            <h1 class="text-2xl font-black">
+
+                {{ student }}
+
+            </h1>
+
+            <p class="card-text mt-3">
+
+                Successfully matched by AI engine
+
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<!-- MANUAL CORRECTION -->
+
+<form
+    method="POST"
+    action="/finalize_attendance"
+>
+
+    <!-- SUBJECT -->
+
+    <input
+        type="hidden"
+        name="subject_name"
+        value="{{ subject_name }}"
+    >
+
+    <!-- DATE -->
+
+    <input
+        type="hidden"
+        name="attendance_date"
+        value="{{ attendance_date }}"
+    >
+
+    <!-- HEADER -->
+
+    <div class="flex justify-between items-center mb-8">
+
+        <div>
+
+            <h2 class="text-5xl font-black mb-2">
+                ⚠ Manual Attendance Correction
+            </h2>
+
+            <p class="card-text text-lg">
+                Select students missed by AI recognition
+            </p>
+
+        </div>
+
+        <div class="bg-red-500/20 text-red-400 px-6 py-3 rounded-2xl font-bold text-xl">
+
+            {{ absent_students|length }} Missed
+
+        </div>
+
+    </div>
+
+    <!-- MISSED STUDENTS -->
+
+    <div class="grid grid-cols-3 gap-6 mb-12">
+
+        {% for student in absent_students %}
+
+        <label
+            class="card border border-zinc-700 rounded-3xl p-6 cursor-pointer hover:border-blue-500 hover:scale-[1.02] transition duration-300"
+        >
+
+            <div class="flex justify-between items-start">
+
+                <!-- LEFT -->
+
+                <div>
+
+                    <div class="w-14 h-14 rounded-full bg-red-500/20 flex items-center justify-center text-2xl mb-5">
+
+                        ⚠
+
+                    </div>
+
+                    <h1 class="text-2xl font-black mb-2">
+
+                        {{ student.name }}
+
+                    </h1>
+
+                    <p class="card-text">
+
+                        AI could not confidently detect this student
+
+                    </p>
+
+                </div>
+
+                <!-- CHECKBOX -->
+
+                <input
+                    type="checkbox"
+                    name="selected_students"
+                    value="{{ student.name }}"
+                    class="w-6 h-6 accent-blue-500"
+                >
+
+            </div>
+
+        </label>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- FINAL ACTION -->
+
+    <button
+        class="w-full bg-blue-500 hover:bg-blue-600 py-6 rounded-3xl text-2xl font-black transition duration-300 hover:scale-[1.01] shadow-2xl"
+    >
+        Finalize Attendance
+    </button>
+
+</form>
+
+{% endblock %}

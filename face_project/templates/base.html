@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <!-- TAILWIND -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- CHART JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>AI Attendance System</title>
+
+</head>
+
+<body
+    id="body"
+    class="bg-black text-white transition duration-300"
+>
+
+<!-- MAIN LAYOUT -->
+
+<div class="flex min-h-screen">
+
+    <!-- SIDEBAR -->
+
+    <div
+        id="sidebar"
+        class="w-72 bg-zinc-950 border-r border-zinc-800 p-8 flex flex-col justify-between transition duration-300"
+    >
+
+        <!-- TOP -->
+
+        <div>
+
+            <!-- LOGO -->
+
+            <h1 class="text-4xl font-black mb-12 tracking-tight">
+                AI Attend
+            </h1>
+
+            <!-- NAVIGATION -->
+
+            <div class="space-y-4">
+
+                <!-- DASHBOARD -->
+
+                <a
+                    href="/dashboard/"
+                    class="nav-item block px-5 py-4 rounded-2xl transition duration-300
+                    {% if request.path == '/dashboard/' %}
+                    bg-blue-500 text-white
+                    {% else %}
+                    bg-zinc-900 hover:bg-zinc-800
+                    {% endif %}"
+                >
+                    Dashboard
+                </a>
+
+                <!-- STUDENTS -->
+
+                <a
+                    href="/students"
+                    class="nav-item block px-5 py-4 rounded-2xl transition duration-300
+                    {% if request.path == '/students' %}
+                    bg-blue-500 text-white
+                    {% else %}
+                    bg-zinc-900 hover:bg-zinc-800
+                    {% endif %}"
+                >
+                    Students
+                </a>
+
+                <!-- ADD STUDENT -->
+
+                <a
+                    href="/add_student"
+                    class="nav-item block px-5 py-4 rounded-2xl transition duration-300
+                    {% if request.path == '/add_student' %}
+                    bg-blue-500 text-white
+                    {% else %}
+                    bg-zinc-900 hover:bg-zinc-800
+                    {% endif %}"
+                >
+                    Add Student
+                </a>
+
+                <!-- MARK ATTENDANCE -->
+
+                <a
+                    href="/mark_attendance"
+                    class="nav-item block px-5 py-4 rounded-2xl transition duration-300
+                    {% if request.path == '/mark_attendance' %}
+                    bg-blue-500 text-white
+                    {% else %}
+                    bg-zinc-900 hover:bg-zinc-800
+                    {% endif %}"
+                >
+                    Mark Attendance
+                </a>
+
+                <!-- HISTORY -->
+
+                <a
+                    href="/attendance_history"
+                    class="nav-item block px-5 py-4 rounded-2xl transition duration-300
+                    {% if request.path == '/attendance_history' %}
+                    bg-blue-500 text-white
+                    {% else %}
+                    bg-zinc-900 hover:bg-zinc-800
+                    {% endif %}"
+                >
+                    Attendance History
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- BOTTOM -->
+
+        <div>
+
+            <!-- THEME BUTTON -->
+
+            <button
+                onclick="toggleTheme()"
+                class="w-full mb-4 bg-white text-black px-5 py-4 rounded-2xl font-bold hover:scale-105 transition duration-300"
+            >
+                Toggle Theme
+            </button>
+
+            <!-- TEACHER CARD -->
+
+            <div class="card bg-zinc-900 border border-zinc-800 p-5 rounded-2xl mb-4">
+
+                <p class="card-text text-zinc-400 text-sm">
+                    Logged In As
+                </p>
+
+                <h2 class="text-xl font-bold mt-1">
+                    {{ session.teacher_name }}
+                </h2>
+
+            </div>
+
+            <!-- LOGOUT -->
+
+            <a
+                href="/logout"
+                class="block bg-red-500 hover:bg-red-600 transition duration-300 text-center px-5 py-4 rounded-2xl"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+
+    <div class="flex-1 p-10">
+
+        {% block content %}
+
+        {% endblock %}
+
+    </div>
+
+</div>
+
+<!-- AI CHATBOT -->
+
+<div class="fixed bottom-8 right-8 z-50">
+
+    <!-- CHAT BUTTON -->
+
+    <button
+        onclick="toggleChatbot()"
+        class="bg-blue-500 hover:bg-blue-600 w-16 h-16 rounded-full text-3xl shadow-2xl transition duration-300 hover:scale-110"
+    >
+        🤖
+    </button>
+
+    <!-- CHAT WINDOW -->
+
+    <div
+        id="chatbotWindow"
+        class="hidden absolute bottom-20 right-0 w-96 card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl"
+    >
+
+        <!-- HEADER -->
+
+        <div class="bg-blue-500 p-5">
+
+            <h1 class="text-2xl font-bold text-white">
+                AI Assistant
+            </h1>
+
+            <p class="text-blue-100 text-sm mt-1">
+                Smart Attendance Support
+            </p>
+
+        </div>
+
+        <!-- CHAT MESSAGES -->
+
+        <div
+            id="chatMessages"
+            class="h-96 overflow-y-auto p-5 space-y-4"
+        >
+
+            <!-- DEFAULT -->
+
+            <div class="bg-zinc-800 p-4 rounded-2xl">
+
+                Hello 👋
+
+                <br><br>
+
+                Ask me about:
+
+                <br><br>
+
+                • Marking attendance  
+                • Adding students  
+                • Face recognition  
+                • Manual correction  
+                • Dashboard analytics
+
+            </div>
+
+        </div>
+
+        <!-- INPUT -->
+
+        <div class="p-4 border-t border-zinc-700">
+
+            <div class="flex gap-3">
+
+                <input
+                    type="text"
+                    id="chatInput"
+                    placeholder="Ask AI Assistant..."
+                    class="flex-1 bg-zinc-800 border border-zinc-700 rounded-2xl px-4 py-3 outline-none"
+                >
+
+                <button
+                    onclick="sendMessage()"
+                    class="bg-blue-500 hover:bg-blue-600 px-5 rounded-2xl font-bold"
+                >
+                    Send
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- TOAST NOTIFICATION -->
+
+<div
+    id="toast"
+    class="hidden fixed top-8 right-8 z-[9999]"
+>
+
+    <div
+        id="toastBox"
+        class="bg-green-500 text-white px-8 py-5 rounded-2xl shadow-2xl text-lg font-bold"
+    >
+        Success
+    </div>
+
+</div>
+
+<!-- THEME SCRIPT -->
+
+<script>
+
+function applyTheme(theme) {
+
+    const body = document.getElementById("body")
+
+    const sidebar = document.getElementById("sidebar")
+
+    const cards = document.querySelectorAll(".card")
+
+    const texts = document.querySelectorAll(".card-text")
+
+    const navItems = document.querySelectorAll(".nav-item")
+
+    // LIGHT MODE
+
+    if(theme === "light") {
+
+        body.classList.remove(
+            "bg-black",
+            "text-white"
+        )
+
+        body.classList.add(
+            "bg-zinc-100",
+            "text-black"
+        )
+
+        sidebar.classList.remove(
+            "bg-zinc-950",
+            "border-zinc-800"
+        )
+
+        sidebar.classList.add(
+            "bg-white",
+            "border-zinc-300"
+        )
+
+        cards.forEach(card => {
+
+            card.classList.remove(
+                "bg-zinc-900",
+                "border-zinc-800"
+            )
+
+            card.classList.add(
+                "bg-white",
+                "border",
+                "border-zinc-300"
+            )
+        })
+
+        texts.forEach(text => {
+
+            text.classList.remove(
+                "text-zinc-400"
+            )
+
+            text.classList.add(
+                "text-zinc-600"
+            )
+        })
+
+        navItems.forEach(item => {
+
+            if(!item.classList.contains("bg-blue-500")) {
+
+                item.classList.remove(
+                    "bg-zinc-900",
+                    "hover:bg-zinc-800"
+                )
+
+                item.classList.add(
+                    "bg-zinc-200",
+                    "hover:bg-zinc-300"
+                )
+            }
+        })
+    }
+
+    // DARK MODE
+
+    else {
+
+        body.classList.remove(
+            "bg-zinc-100",
+            "text-black"
+        )
+
+        body.classList.add(
+            "bg-black",
+            "text-white"
+        )
+
+        sidebar.classList.remove(
+            "bg-white",
+            "border-zinc-300"
+        )
+
+        sidebar.classList.add(
+            "bg-zinc-950",
+            "border-zinc-800"
+        )
+
+        cards.forEach(card => {
+
+            card.classList.remove(
+                "bg-white",
+                "border-zinc-300"
+            )
+
+            card.classList.add(
+                "bg-zinc-900",
+                "border",
+                "border-zinc-800"
+            )
+        })
+
+        texts.forEach(text => {
+
+            text.classList.remove(
+                "text-zinc-600"
+            )
+
+            text.classList.add(
+                "text-zinc-400"
+            )
+        })
+
+        navItems.forEach(item => {
+
+            if(!item.classList.contains("bg-blue-500")) {
+
+                item.classList.remove(
+                    "bg-zinc-200",
+                    "hover:bg-zinc-300"
+                )
+
+                item.classList.add(
+                    "bg-zinc-900",
+                    "hover:bg-zinc-800"
+                )
+            }
+        })
+    }
+}
+
+function toggleTheme() {
+
+    const currentTheme =
+        localStorage.getItem("theme") || "dark"
+
+    const newTheme =
+        currentTheme === "dark"
+        ? "light"
+        : "dark"
+
+    localStorage.setItem(
+        "theme",
+        newTheme
+    )
+
+    applyTheme(newTheme)
+}
+
+window.onload = () => {
+
+    const savedTheme =
+        localStorage.getItem("theme") || "dark"
+
+    applyTheme(savedTheme)
+}
+
+</script>
+
+<!-- CHATBOT SCRIPT -->
+
+<script>
+
+function toggleChatbot() {
+
+    const chatbot = document.getElementById(
+        "chatbotWindow"
+    )
+
+    chatbot.classList.toggle("hidden")
+}
+
+function sendMessage() {
+
+    const input = document.getElementById(
+        "chatInput"
+    )
+
+    const messages = document.getElementById(
+        "chatMessages"
+    )
+
+    const userMessage = input.value.trim()
+
+    if(userMessage === "") {
+        return
+    }
+
+    // USER MESSAGE
+
+    messages.innerHTML += `
+
+        <div class="flex justify-end">
+
+            <div class="bg-blue-500 text-white p-4 rounded-2xl max-w-[80%]">
+
+                ${userMessage}
+
+            </div>
+
+        </div>
+    `
+
+    const msg = userMessage.toLowerCase()
+
+    let response = `
+        I couldn't understand your question.
+    `
+
+    // ATTENDANCE
+
+    if(
+        msg.includes("attendance")
+        ||
+        msg.includes("mark")
+    ) {
+
+        response = `
+        <b>How to Mark Attendance:</b>
+
+        <br><br>
+
+        1. Open Mark Attendance page
+
+        <br><br>
+
+        2. Select class and subject
+
+        <br><br>
+
+        3. Upload 2-3 classroom images
+
+        <br><br>
+
+        4. Click Process Attendance
+
+        <br><br>
+
+        5. AI detects students automatically
+
+        <br><br>
+
+        6. Finalize attendance manually if needed
+        `
+    }
+
+    // ADD STUDENT
+
+    else if(
+        msg.includes("student")
+        ||
+        msg.includes("add")
+    ) {
+
+        response = `
+        <b>How to Add Students:</b>
+
+        <br><br>
+
+        1. Open Add Student page
+
+        <br><br>
+
+        2. Enter student details
+
+        <br><br>
+
+        3. Upload multiple student images
+
+        <br><br>
+
+        4. Select class and subject
+
+        <br><br>
+
+        5. Click Add Student
+        `
+    }
+
+    // FACE RECOGNITION
+
+    else if(
+        msg.includes("face")
+        ||
+        msg.includes("recognition")
+    ) {
+
+        response = `
+        <b>AI Recognition Process:</b>
+
+        <br><br>
+
+        • AI scans classroom images
+
+        <br><br>
+
+        • Faces are converted into encodings
+
+        <br><br>
+
+        • System compares faces with student database
+
+        <br><br>
+
+        • Matched students are marked present
+        `
+    }
+
+    // MANUAL
+
+    else if(
+        msg.includes("manual")
+        ||
+        msg.includes("missed")
+    ) {
+
+        response = `
+        <b>Manual Attendance Correction:</b>
+
+        <br><br>
+
+        1. AI shows absent students
+
+        <br><br>
+
+        2. Teacher selects missed students
+
+        <br><br>
+
+        3. Click Finalize Attendance
+
+        <br><br>
+
+        4. Attendance updates automatically
+        `
+    }
+
+    // DASHBOARD
+
+    else if(
+        msg.includes("dashboard")
+        ||
+        msg.includes("analytics")
+    ) {
+
+        response = `
+        <b>Dashboard Features:</b>
+
+        <br><br>
+
+        • Day-wise attendance analytics
+
+        <br><br>
+
+        • Total student monitoring
+
+        <br><br>
+
+        • Attendance trend graph
+
+        <br><br>
+
+        • System health tracking
+        `
+    }
+
+    // AI RESPONSE
+
+    setTimeout(() => {
+
+        messages.innerHTML += `
+
+            <div class="flex justify-start">
+
+                <div class="bg-zinc-800 p-4 rounded-2xl max-w-[80%]">
+
+                    ${response}
+
+                </div>
+
+            </div>
+        `
+
+        messages.scrollTop =
+            messages.scrollHeight
+
+    }, 500)
+
+    input.value = ""
+
+    messages.scrollTop =
+        messages.scrollHeight
+}
+
+document.getElementById(
+    "chatInput"
+).addEventListener(
+
+    "keypress",
+
+    function(event) {
+
+        if(event.key === "Enter") {
+
+            sendMessage()
+        }
+    }
+)
+
+</script>
+
+<!-- TOAST SCRIPT -->
+
+<script>
+
+function showToast(message, type="success") {
+
+    const toast = document.getElementById(
+        "toast"
+    )
+
+    const toastBox = document.getElementById(
+        "toastBox"
+    )
+
+    toastBox.innerText = message
+
+    toastBox.classList.remove(
+        "bg-green-500",
+        "bg-red-500",
+        "bg-blue-500"
+    )
+
+    if(type === "success") {
+
+        toastBox.classList.add(
+            "bg-green-500"
+        )
+    }
+
+    else if(type === "error") {
+
+        toastBox.classList.add(
+            "bg-red-500"
+        )
+    }
+
+    else {
+
+        toastBox.classList.add(
+            "bg-blue-500"
+        )
+    }
+
+    toast.classList.remove("hidden")
+
+    setTimeout(() => {
+
+        toast.classList.add("hidden")
+
+    }, 3000)
+}
+
+</script>
+
+</body>
+
+</html>

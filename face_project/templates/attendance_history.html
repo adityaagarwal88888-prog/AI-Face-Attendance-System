@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HEADER -->
+
+<div class="flex justify-between items-center mb-12">
+
+    <div>
+
+        <h1 class="text-6xl font-black mb-3">
+            Attendance History
+        </h1>
+
+        <p class="card-text text-xl">
+            AI generated attendance records and analytics dashboard
+        </p>
+
+    </div>
+
+    <!-- EXPORT -->
+
+    <a
+        href="/export_attendance"
+        class="bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition duration-300 shadow-2xl shadow-blue-500/20"
+    >
+        Export CSV
+    </a>
+
+</div>
+
+<!-- OVERVIEW -->
+
+<div class="grid grid-cols-3 gap-8 mb-14">
+
+    <!-- TOTAL DAYS -->
+
+    <div class="glass rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            Total Attendance Days
+        </p>
+
+        <h1 class="text-7xl font-black text-blue-400">
+
+            {{ attendance_history|length }}
+
+        </h1>
+
+    </div>
+
+    <!-- TOTAL STUDENTS -->
+
+    <div class="glass rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            Registered Students
+        </p>
+
+        <h1 class="text-7xl font-black text-green-400">
+
+            {{ total_students }}
+
+        </h1>
+
+    </div>
+
+    <!-- AI STATUS -->
+
+    <div class="glass rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            AI Recognition Engine
+        </p>
+
+        <h1 class="text-5xl font-black text-purple-400">
+
+            Active
+
+        </h1>
+
+    </div>
+
+</div>
+
+<!-- HISTORY -->
+
+<div class="space-y-8">
+
+    {% for day in attendance_history %}
+
+    <!-- ATTENDANCE CARD -->
+
+    <div class="glass rounded-3xl overflow-hidden border border-white/10">
+
+        <!-- TOP SECTION -->
+
+        <button
+            onclick="toggleAttendance('attendance{{ loop.index }}')"
+            class="w-full p-8 text-left hover:bg-white/5 transition duration-300"
+        >
+
+            <div class="flex justify-between items-center">
+
+                <!-- LEFT -->
+
+                <div>
+
+                    <div class="flex items-center gap-5 mb-4">
+
+                        <!-- ICON -->
+
+                        <div class="w-16 h-16 rounded-2xl bg-blue-500/20 flex items-center justify-center text-3xl">
+
+                            📅
+
+                        </div>
+
+                        <!-- TEXT -->
+
+                        <div>
+
+                            <h1 class="text-4xl font-black">
+
+                                {{ day.date }}
+
+                            </h1>
+
+                            <p class="card-text text-lg mt-1">
+
+                                AI Generated Attendance Session
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PRESENT -->
+
+                    <div class="flex gap-4 items-center">
+
+                        <div class="bg-green-500/20 text-green-400 px-5 py-2 rounded-xl font-bold">
+
+                            {{ day.present_count }} Present
+
+                        </div>
+
+                        <div class="bg-red-500/20 text-red-400 px-5 py-2 rounded-xl font-bold">
+
+                            {{ total_students - day.present_count }} Absent
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- RIGHT -->
+
+                <div class="text-right">
+
+                    <h1 class="text-7xl font-black text-green-400">
+
+                        {{ day.percentage }}%
+
+                    </h1>
+
+                    <p class="card-text text-lg">
+
+                        Attendance
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </button>
+
+        <!-- DROPDOWN -->
+
+        <div
+            id="attendance{{ loop.index }}"
+            class="hidden border-t border-white/10"
+        >
+
+            <div class="p-8">
+
+                <!-- TITLE -->
+
+                <div class="flex justify-between items-center mb-10">
+
+                    <div>
+
+                        <h2 class="text-4xl font-black mb-2">
+                            Present Students
+                        </h2>
+
+                        <p class="card-text text-lg">
+                            Students detected and verified by AI recognition
+                        </p>
+
+                    </div>
+
+                    <div class="bg-green-500/20 text-green-400 px-6 py-3 rounded-2xl font-bold text-xl">
+
+                        {{ day.present_count }} Verified
+
+                    </div>
+
+                </div>
+
+                <!-- STUDENTS GRID -->
+
+                <div class="grid grid-cols-3 gap-6">
+
+                    {% for student in day.students %}
+
+                    <!-- STUDENT CARD -->
+
+                    <div class="glass rounded-3xl p-6 hover:scale-[1.03] transition duration-300 border border-white/10">
+
+                        <!-- TOP -->
+
+                        <div class="flex justify-between items-center mb-5">
+
+                            <div class="w-14 h-14 rounded-full bg-green-500/20 flex items-center justify-center text-2xl">
+
+                                ✅
+
+                            </div>
+
+                            <span class="text-green-400 font-bold text-lg">
+
+                                Present
+
+                            </span>
+
+                        </div>
+
+                        <!-- NAME -->
+
+                        <h1 class="text-2xl font-black mb-4">
+
+                            {{ student.student_name }}
+
+                        </h1>
+
+                        <!-- SUBJECT -->
+
+                        <div class="inline-block bg-blue-500/20 text-blue-400 px-5 py-2 rounded-xl text-sm font-bold mb-5">
+
+                            {{ student.subject }}
+
+                        </div>
+
+                        <!-- FOOTER -->
+
+                        <p class="card-text">
+
+                            Attendance verified successfully by AI engine
+
+                        </p>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- EMPTY STATE -->
+
+{% if attendance_history|length == 0 %}
+
+<div class="glass rounded-3xl p-20 text-center mt-10 border border-white/10">
+
+    <div class="text-9xl mb-8">
+        📂
+    </div>
+
+    <h1 class="text-6xl font-black mb-5">
+        No Attendance Records Found
+    </h1>
+
+    <p class="card-text text-2xl mb-10">
+
+        Attendance history will appear after AI attendance processing
+
+    </p>
+
+    <a
+        href="/mark_attendance"
+        class="inline-block bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-10 py-5 rounded-2xl font-bold text-xl hover:scale-105 transition duration-300 shadow-2xl shadow-blue-500/20"
+    >
+        Mark Attendance
+    </a>
+
+</div>
+
+{% endif %}
+
+<!-- TOGGLE SCRIPT -->
+
+<script>
+
+function toggleAttendance(id) {
+
+    const section = document.getElementById(id)
+
+    section.classList.toggle("hidden")
+}
+
+</script>
+
+{% endblock %}

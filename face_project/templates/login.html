@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>Teacher Login</title>
+
+</head>
+
+<body class="bg-black text-white overflow-hidden">
+
+    <!-- BACKGROUND GLOW -->
+
+    <div class="absolute inset-0 overflow-hidden">
+
+        <div class="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 blur-3xl rounded-full"></div>
+
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 blur-3xl rounded-full"></div>
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="relative min-h-screen flex items-center justify-center px-6">
+
+        <!-- LOGIN CARD -->
+
+        <div class="w-full max-w-md bg-zinc-900/90 backdrop-blur-xl border border-zinc-800 rounded-3xl p-10 shadow-2xl">
+
+            <!-- LOGO -->
+
+            <div class="text-center mb-10">
+
+                <div class="text-7xl mb-5">
+                    🤖
+                </div>
+
+                <h1 class="text-5xl font-black mb-3">
+                    Welcome Back
+                </h1>
+
+                <p class="text-zinc-400 text-lg">
+                    Login to AI Attendance System
+                </p>
+
+            </div>
+
+            <!-- SUCCESS MESSAGES -->
+
+            {% if request.args.get("registered") %}
+
+            <div class="bg-green-500/20 border border-green-500/30 text-green-400 p-4 rounded-2xl mb-6 text-center font-semibold">
+
+                Registration Successful
+
+            </div>
+
+            {% endif %}
+
+            {% if request.args.get("reset") %}
+
+            <div class="bg-blue-500/20 border border-blue-500/30 text-blue-400 p-4 rounded-2xl mb-6 text-center font-semibold">
+
+                Password Reset Successful
+
+            </div>
+
+            {% endif %}
+
+            <!-- ERROR -->
+
+            {% if error %}
+
+            <div class="bg-red-500/20 border border-red-500/30 text-red-400 p-4 rounded-2xl mb-6 text-center font-semibold">
+
+                {{ error }}
+
+            </div>
+
+            {% endif %}
+
+            <!-- FORM -->
+
+            <form
+                method="POST"
+                class="space-y-6"
+            >
+
+                <!-- EMAIL -->
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    required
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 transition duration-300"
+                >
+
+                <!-- PASSWORD -->
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 transition duration-300"
+                >
+
+                <!-- FORGOT PASSWORD -->
+
+                <div class="text-right">
+
+                    <a
+                        href="/forgot_password"
+                        class="text-blue-400 hover:text-blue-300 text-sm font-semibold"
+                    >
+                        Forgot Password?
+                    </a>
+
+                </div>
+
+                <!-- BUTTON -->
+
+                <button
+                    class="w-full bg-white text-black py-4 rounded-2xl font-bold text-lg hover:scale-105 transition duration-300"
+                >
+                    Login
+                </button>
+
+            </form>
+
+            <!-- REGISTER -->
+
+            <div class="text-center mt-8">
+
+                <p class="text-zinc-400">
+
+                    Don't have an account?
+
+                    <a
+                        href="/register"
+                        class="text-white font-bold hover:text-blue-400 transition"
+                    >
+                        Register
+                    </a>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

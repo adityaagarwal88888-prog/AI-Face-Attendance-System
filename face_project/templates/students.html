@@ -1,0 +1,382 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HEADER -->
+
+<div class="flex justify-between items-center mb-10">
+
+    <div>
+
+        <h1 class="text-6xl font-black mb-2">
+            Students
+        </h1>
+
+        <p class="card-text text-xl">
+            Manage registered students and attendance analytics
+        </p>
+
+    </div>
+
+    <!-- ADD BUTTON -->
+
+    <a
+        href="/add_student"
+        class="bg-white text-black px-6 py-4 rounded-2xl font-bold hover:scale-105 transition duration-300"
+    >
+        Add Student
+    </a>
+
+</div>
+
+<!-- SEARCH -->
+
+<div class="mb-8">
+
+    <input
+        type="text"
+        id="studentSearch"
+        placeholder="Search by student name, roll number, class or subject..."
+        onkeyup="searchStudents()"
+        class="card w-full border rounded-2xl px-6 py-5 outline-none"
+    >
+
+</div>
+
+<!-- ANALYTICS -->
+
+<div class="grid grid-cols-3 gap-6 mb-10">
+
+    <!-- TOTAL -->
+
+    <div class="card rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            Total Students
+        </p>
+
+        <h1 class="text-6xl font-black">
+            {{ students|length }}
+        </h1>
+
+    </div>
+
+    <!-- EXCELLENT -->
+
+    <div class="card rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            Excellent Attendance
+        </p>
+
+        <h1 class="text-6xl font-black text-green-400">
+
+            {{
+                students
+                |
+                selectattr(
+                    "attendance_status",
+                    "equalto",
+                    "Excellent"
+                )
+                |
+                list
+                |
+                length
+            }}
+
+        </h1>
+
+    </div>
+
+    <!-- LOW -->
+
+    <div class="card rounded-3xl p-8">
+
+        <p class="card-text text-lg mb-4">
+            Low Attendance
+        </p>
+
+        <h1 class="text-6xl font-black text-red-400">
+
+            {{
+                students
+                |
+                selectattr(
+                    "attendance_status",
+                    "equalto",
+                    "Low"
+                )
+                |
+                list
+                |
+                length
+            }}
+
+        </h1>
+
+    </div>
+
+</div>
+
+<!-- STUDENTS TABLE -->
+
+<div class="card border rounded-3xl overflow-hidden">
+
+    <!-- HEADER -->
+
+    <div class="grid grid-cols-7 gap-4 p-6 border-b border-zinc-700 font-bold card-text">
+
+        <div>Photo</div>
+        <div>Name</div>
+        <div>Roll No</div>
+        <div>Class</div>
+        <div>Subject</div>
+        <div>Attendance</div>
+        <div>Action</div>
+
+    </div>
+
+    <!-- STUDENTS -->
+
+    {% for student in students %}
+
+    <div
+        class="student-row grid grid-cols-7 gap-4 p-6 border-b border-zinc-700 items-center hover:bg-zinc-800/40 transition duration-300"
+    >
+
+        <!-- PHOTO -->
+
+        <div>
+
+            <img
+               src="{{ student.image_path }}"
+                onclick="openImage(this.src)"
+                class="w-12 h-12 rounded-xl object-cover border border-zinc-700 cursor-pointer hover:scale-110 transition duration-300 shadow-lg"
+            >
+
+        </div>
+
+        <!-- NAME -->
+
+        <div>
+
+            <h1 class="font-semibold text-lg">
+
+                {{ student.name }}
+
+            </h1>
+
+            <!-- STATUS -->
+
+            {% if student.attendance_color == "green" %}
+
+            <p class="text-green-400 text-sm font-semibold mt-1">
+
+                Excellent Attendance
+
+            </p>
+
+            {% elif student.attendance_color == "yellow" %}
+
+            <p class="text-yellow-400 text-sm font-semibold mt-1">
+
+                Average Attendance
+
+            </p>
+
+            {% else %}
+
+            <p class="text-red-400 text-sm font-semibold mt-1">
+
+                Low Attendance
+
+            </p>
+
+            {% endif %}
+
+        </div>
+
+        <!-- ROLL -->
+
+        <div class="card-text">
+            {{ student.roll_no }}
+        </div>
+
+        <!-- CLASS -->
+
+        <div>
+
+            <span class="bg-blue-500/20 text-blue-400 px-4 py-2 rounded-xl text-sm font-semibold">
+
+                {{ student.class_name }}
+
+            </span>
+
+        </div>
+
+        <!-- SUBJECT -->
+
+        <div>
+
+            <span class="bg-green-500/20 text-green-400 px-4 py-2 rounded-xl text-sm font-semibold">
+
+                {{ student.subject_name }}
+
+            </span>
+
+        </div>
+
+        <!-- ATTENDANCE -->
+
+        <div>
+
+            <!-- PERCENTAGE -->
+
+            <div class="flex justify-between items-center mb-2">
+
+                <span class="font-bold text-lg">
+
+                    {{ student.attendance_percentage }}%
+
+                </span>
+
+            </div>
+
+            <!-- BAR -->
+
+            <div class="w-full bg-zinc-700 rounded-full h-3 overflow-hidden">
+
+                {% if student.attendance_color == "green" %}
+
+                <div
+                    class="bg-green-400 h-3 rounded-full"
+                    style="width: {{ student.attendance_percentage }}%;"
+                ></div>
+
+                {% elif student.attendance_color == "yellow" %}
+
+                <div
+                    class="bg-yellow-400 h-3 rounded-full"
+                    style="width: {{ student.attendance_percentage }}%;"
+                ></div>
+
+                {% else %}
+
+                <div
+                    class="bg-red-400 h-3 rounded-full"
+                    style="width: {{ student.attendance_percentage }}%;"
+                ></div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- DELETE -->
+
+        <div>
+
+            <a
+                href="/delete_student/{{ student.id }}"
+                class="bg-red-500 hover:bg-red-600 px-5 py-3 rounded-xl transition duration-300"
+            >
+                Delete
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- IMAGE MODAL -->
+
+<div
+    id="imageModal"
+    class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50"
+>
+
+    <div class="relative">
+
+        <!-- CLOSE -->
+
+        <button
+            onclick="closeImage()"
+            class="absolute -top-14 right-0 text-white text-5xl"
+        >
+            ×
+        </button>
+
+        <!-- IMAGE -->
+
+        <img
+            id="modalImage"
+            class="max-w-[700px] max-h-[700px] rounded-3xl border border-zinc-700"
+        >
+
+    </div>
+
+</div>
+
+<!-- SEARCH SCRIPT -->
+
+<script>
+
+function searchStudents() {
+
+    const input = document.getElementById(
+        "studentSearch"
+    ).value.toLowerCase()
+
+    const students = document.querySelectorAll(
+        ".student-row"
+    )
+
+    students.forEach(student => {
+
+        const text =
+            student.innerText.toLowerCase()
+
+        if(text.includes(input)) {
+
+            student.style.display = "grid"
+        }
+
+        else {
+
+            student.style.display = "none"
+        }
+    })
+}
+
+</script>
+
+<!-- IMAGE MODAL SCRIPT -->
+
+<script>
+
+function openImage(src) {
+
+    document.getElementById(
+        "modalImage"
+    ).src = src
+
+    document.getElementById(
+        "imageModal"
+    ).classList.remove("hidden")
+}
+
+function closeImage() {
+
+    document.getElementById(
+        "imageModal"
+    ).classList.add("hidden")
+}
+
+</script>
+
+{% endblock %}

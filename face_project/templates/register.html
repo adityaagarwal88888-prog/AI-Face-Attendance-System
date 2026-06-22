@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>Teacher Register</title>
+
+</head>
+
+<body class="bg-black text-white">
+
+    <div class="min-h-screen flex items-center justify-center px-6">
+
+        <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-10">
+
+            <!-- TITLE -->
+
+            <div class="text-center mb-10">
+
+                <h1 class="text-5xl font-black mb-3">
+                    Create Account
+                </h1>
+
+                <p class="text-zinc-400 text-lg">
+                    Register for AI Attendance System
+                </p>
+
+            </div>
+
+            <!-- FORM -->
+
+            <form method="POST" class="space-y-6">
+
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Full Name"
+                    required
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-white transition"
+                >
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    required
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-white transition"
+                >
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                    class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-white transition"
+                >
+
+                <button
+                    class="w-full bg-white text-black py-4 rounded-2xl font-bold text-lg hover:scale-105 transition duration-300"
+                >
+                    Register
+                </button>
+
+            </form>
+
+            <!-- LOGIN -->
+
+            <div class="text-center mt-8">
+
+                <p class="text-zinc-400">
+
+                    Already have an account?
+
+                    <a
+                        href="/login"
+                        class="text-white font-bold hover:underline"
+                    >
+                        Login
+                    </a>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
